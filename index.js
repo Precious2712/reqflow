@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 // const imageRoutes = require('./src/route/upload');
 const profile = require('./src/route/userProfile');
 const auths = require('./src/route/auth');
+const request = require('./src/route/sender');
 
 const app = express();
 app.use(express.json());
@@ -15,6 +16,7 @@ app.use(cors());
 // app.use('/image', imageRoutes);
 app.use('/info', profile); 
 app.use('/auth', auths);
+app.use('/friend', request);
 
 const port = 4000;
 

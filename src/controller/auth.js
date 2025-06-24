@@ -13,15 +13,9 @@ const signUp = async (req, res) => {
 
     try {
         if (!username || !password) {
-            res.status(400).json({
+            return res.status(400).json({
                 message: 'username or password is required'
             });
-        }
-
-        if (username) {
-            res.status(400).json({
-                message: 'username already exist'
-            })
         }
 
         const harshPassword = await bcrypt.genSalt();
@@ -53,7 +47,7 @@ const signIn = async (req, res) => {
         if (!userBio) {
             return res.status(401).json({
                 success: false,
-                message: 'username is required'
+                message: 'invalid crendentials provided'
             });
         }
 
@@ -62,7 +56,7 @@ const signIn = async (req, res) => {
         if (!harshPassword) {
             return res.status(401).json({
                 success: false,
-                message: 'username is required'
+                message: 'invalid crendentials provided'
             });
         }
 
@@ -124,9 +118,29 @@ const uploadProfilePicture = async (req, res) => {
     }
 };
 
+const checkCurrentUser = async (req, res) => {
+    try {
+        const userId = await Auth.findById(req.user);
+        if (!userId) {
+            res.status(400).json({
+                message: 'No user found'
+            })
+        }
+        res.status(201).json({
+            message: 'User found in database',
+            data: userId
+        })
+    } catch (error) {
+        res.status(401).json({
+            message: 'No user found',
+            error: error.message
+        })
+    }
+}
 
 module.exports = {
     signUp,
     signIn,
-    uploadProfilePicture
+    uploadProfilePicture,
+    checkCurrentUser
 }

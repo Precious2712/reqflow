@@ -3,7 +3,7 @@ const userId = require('../model/auth');
 
 const userProfile = async (req, res) => {
   try {
-    const { firstname, lastname, profileInfo, about, hobby, id, username } = req.body;
+    const { firstname, lastname, profileInfo, about, hobby, id } = req.body;
 
     if (!firstname || !lastname) {
       return res.status(400).json({ message: 'First name and last name are required' });
@@ -113,11 +113,11 @@ const updateInfo = async (req, res) => {
 const getUserProfile = async (req, res) => {
   try {
     const { id } = req.params;
-    const bioProfile = await Profile.findOne({id: id});
+    const bioProfile = await Profile.findOne({ id: id });
     // console.log(bioProfile);
-    
+
     if (!bioProfile) {
-      res.status(400).json({
+      return res.status(400).json({
         message: 'No record in data base'
       });
     }
@@ -135,9 +135,43 @@ const getUserProfile = async (req, res) => {
   }
 }
 
+const searchField = async (req, res) => {
+  try {
+    const { firstname } = req.query;
+    let query = {};
+
+    if (firstname) {
+      query.firstname = { $regex: firstname.toLowerCase(), $options: 'i' }; 
+    }
+
+    // if (lastname) {
+    //   query.lastname = { $regex: lastname, $options: 'i' };
+    // }
+
+    // if (username) {
+    //   query.username = { $regex: username, $options: 'i' };
+    // }
+
+    const search = await Profile.find(query);
+
+    res.status(200).json({
+      message: 'Results found',
+      search
+    });
+  } catch (error) {
+    console.log('Error message:', error);
+
+    res.status(400).json({
+      message: 'An error occurred',
+      error
+    });
+  }
+};
+
 
 module.exports = {
   userProfile,
   updateInfo,
-  getUserProfile
+  getUserProfile,
+  searchField
 };
