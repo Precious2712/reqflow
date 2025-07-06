@@ -6,12 +6,14 @@ const {
     userProfile,
     updateInfo,
     getUserProfile,
-    searchField
+    searchField,
+    deleteUser
 } = require('../controller/userProfile');
 
 path.post('/profile', userProfile);
 path.put('/update-info/:id', updateInfo);
 path.get('/getUserProfile/:id', getUserProfile);
 path.get('/search-field', searchField);
+path.delete('/deleteUser/:id', deleteUser);
 
 module.exports = path;

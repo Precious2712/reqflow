@@ -1,5 +1,6 @@
 const SendReq = require('../model/sender');
 const userId = require('../model/auth');
+const Profile = require('../model/userprofile');
 
 const sendRequest = async (req, res) => {
     try {
@@ -67,10 +68,10 @@ const sendRequest = async (req, res) => {
 };
 
 const seeSendRequet = async (req, res) => {
-    const { id } = req.params; 
+    const { id } = req.params;
 
     try {
-        const client = await SendReq.find({ reciever: id }); 
+        const client = await SendReq.find({ reciever: id });
 
         if (!client) {
             return res.status(404).json({
@@ -83,7 +84,7 @@ const seeSendRequet = async (req, res) => {
             client
         });
 
-        console.log('client', client);
+        // console.log('client', client);
 
     } catch (error) {
         console.log(error);
@@ -94,9 +95,55 @@ const seeSendRequet = async (req, res) => {
     }
 };
 
+const updateApprovalRequest = async (req, res) => {
+    const { approval } = req.body;
+    const { id } = req.params;
+
+    try {
+        const updated = await SendReq.findByIdAndUpdate(id, { approval }, { new: true });
+
+        if (!updated) {
+            return res.status(404).json({ message: "Friend request not found" });
+        }
+
+        res.status(200).json({
+            message: "Friend request approved",
+            data: updated,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Something went wrong",
+        });
+    }
+};
+
+
+const rejectRequest = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deleteRequest = await SendReq.findByIdAndDelete(id);
+        if (!deleteRequest) {
+            return res.status(401).json({
+                message: 'No id found'
+            });
+        }
+        res.status(201).json({
+            message: 'id deleted',
+            deleteRequest
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
+        });
+    }
+}
 
 
 module.exports = {
     sendRequest,
-    seeSendRequet
+    seeSendRequet,
+    updateApprovalRequest,
+    rejectRequest
 }

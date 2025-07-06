@@ -100,7 +100,6 @@ const uploadProfilePicture = async (req, res) => {
         const imageUrl = req.file.path.replace('http://', 'https://');
         console.log("Uploaded image URL:", imageUrl);
 
-        // Update image
         Cid.image = imageUrl;
         await Cid.save();
 

@@ -18,7 +18,7 @@ const personalProfile = new Schema({
     maritalStatus: {
         type: String,
         required: true,
-        enum: ['married', 'single']
+        enum: ['married', 'single', 'divorced', 'widowed', 'seperated', 'In a relationship']
     }
 }, { strict: 'throw' });
 

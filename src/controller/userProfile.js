@@ -70,7 +70,7 @@ const updateInfo = async (req, res) => {
   const { country, occupation, aboutYourself, religion, maritalStatus, one, two, three } = req.body;
 
   try {
-    const userProfile = await Profile.findById(id);
+    const userProfile = await Profile.findOne({ id: id });
     if (!userProfile) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -104,6 +104,8 @@ const updateInfo = async (req, res) => {
       message: 'Profile updated successfully',
       data: userProfile
     });
+    console.log('user-profile-data', userProfile);
+
   } catch (error) {
     console.error('Error updating user profile:', error);
     return res.status(500).json({ message: 'Internal server error' });
@@ -141,7 +143,7 @@ const searchField = async (req, res) => {
     let query = {};
 
     if (firstname) {
-      query.firstname = { $regex: firstname.toLowerCase(), $options: 'i' }; 
+      query.firstname = { $regex: firstname.toLowerCase(), $options: 'i' };
     }
 
     // if (lastname) {
@@ -168,10 +170,33 @@ const searchField = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  const { id } = req.params
+  try {
+    const deletedUser = await Profile.findOneAndDelete({ id: id });
+    if (!deletedUser) {
+      return res.status(400).json({
+        message: 'No user found'
+      })
+    }
+    res.status(201).json({
+      status: true,
+      deletedUser
+    })
+  } catch (error) {
+    console.log('Error deleting user', error);
+    res.status(400).json({
+      message: 'An error occurred',
+      error
+    });
+  }
+}
+
 
 module.exports = {
   userProfile,
   updateInfo,
   getUserProfile,
-  searchField
+  searchField,
+  deleteUser
 };
